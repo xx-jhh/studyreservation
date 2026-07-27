@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -40,5 +41,32 @@ public class AdminRoomController {
 
         roomService.registerRoom(request.getName(), request.getDescription(), request.getCapacity());
         return "redirect:/admin/rooms/new";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        Room room = roomService.findRoomById(id);
+
+        RoomRegisterRequest request = new RoomRegisterRequest();
+        request.setName(room.getName());
+        request.setDescription(room.getDescription());
+        request.setCapacity(room.getCapacity());
+
+        model.addAttribute("roomId", id);
+        model.addAttribute("roomRegisterRequest", request);
+        return "room/admin/edit";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String edit(@PathVariable Long id,
+                        @Valid @ModelAttribute("roomRegisterRequest") RoomRegisterRequest request,
+                        BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("roomId", id);
+            return "room/admin/edit";
+        }
+
+        roomService.updateRoom(id, request.getName(), request.getDescription(), request.getCapacity());
+        return "redirect:/admin/rooms";
     }
 }

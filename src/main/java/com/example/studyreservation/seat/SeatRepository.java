@@ -8,4 +8,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     List<Seat> findByRoomId(Long roomId);
 
     boolean existsByRoomIdAndSeatNumber(Long roomId, String seatNumber);
+
+    boolean existsByRoomIdAndSeatNumberAndIdNot(Long roomId, String seatNumber, Long id);
 }

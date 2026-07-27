@@ -38,6 +38,7 @@ class SeatServiceTest {
     void setUp() {
         seatService = new SeatService(seatRepository, roomRepository);
         room = Room.builder().name("1층 스터디룸").description("설명").capacity(20).build();
+        ReflectionTestUtils.setField(room, "id", 1L);
     }
 
     @Test
@@ -115,5 +116,38 @@ class SeatServiceTest {
         when(seatRepository.findByRoomId(1L)).thenReturn(List.of(seat));
 
         assertThat(seatService.findSeatsByRoom(1L)).containsExactly(seat);
+    }
+
+    @Test
+    void 좌석_번호를_수정하면_반영된다() {
+        Seat seat = Seat.builder().room(room).seatNumber("A1").build();
+        ReflectionTestUtils.setField(seat, "id", 10L);
+        when(seatRepository.findById(10L)).thenReturn(Optional.of(seat));
+        when(seatRepository.existsByRoomIdAndSeatNumberAndIdNot(1L, "B1", 10L)).thenReturn(false);
+
+        seatService.updateSeat(10L, "B1");
+
+        assertThat(seat.getSeatNumber()).isEqualTo("B1");
+    }
+
+    @Test
+    void 다른_좌석이_이미_쓰는_번호로_수정하려_하면_예외() {
+        Seat seat = Seat.builder().room(room).seatNumber("A1").build();
+        ReflectionTestUtils.setField(seat, "id", 10L);
+        when(seatRepository.findById(10L)).thenReturn(Optional.of(seat));
+        when(seatRepository.existsByRoomIdAndSeatNumberAndIdNot(1L, "B1", 10L)).thenReturn(true);
+
+        assertThatThrownBy(() -> seatService.updateSeat(10L, "B1"))
+                .isInstanceOf(DuplicateSeatNumberException.class);
+
+        assertThat(seat.getSeatNumber()).isEqualTo("A1");
+    }
+
+    @Test
+    void 존재하지_않는_좌석을_수정하려_하면_예외() {
+        when(seatRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> seatService.updateSeat(999L, "B1"))
+                .isInstanceOf(SeatNotFoundException.class);
     }
 }

@@ -52,4 +52,32 @@ public class AdminSeatController {
         seatService.deleteSeat(seatId);
         return "redirect:/admin/seats";
     }
+
+    @GetMapping("/{seatId}/edit")
+    public String editForm(@PathVariable Long seatId, Model model) {
+        Seat seat = seatService.findSeatById(seatId);
+
+        SeatRegisterRequest request = new SeatRegisterRequest();
+        request.setRoomId(seat.getRoom().getId());
+        request.setSeatNumber(seat.getSeatNumber());
+
+        model.addAttribute("seatId", seatId);
+        model.addAttribute("roomName", seat.getRoom().getName());
+        model.addAttribute("seatRegisterRequest", request);
+        return "seat/admin/edit";
+    }
+
+    @PostMapping("/{seatId}/edit")
+    public String edit(@PathVariable Long seatId,
+                        @Valid @ModelAttribute("seatRegisterRequest") SeatRegisterRequest request,
+                        BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("seatId", seatId);
+            model.addAttribute("roomName", seatService.findSeatById(seatId).getRoom().getName());
+            return "seat/admin/edit";
+        }
+
+        seatService.updateSeat(seatId, request.getSeatNumber());
+        return "redirect:/admin/seats";
+    }
 }

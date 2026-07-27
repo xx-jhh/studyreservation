@@ -54,8 +54,21 @@ public class SeatService {
                 .orElseThrow(SeatNotFoundException::new);
     }
 
+    @Transactional
+    public void updateSeat(Long seatId, String seatNumber) {
+        Seat seat = findSeatById(seatId);
+        validateDuplicateSeatNumberForUpdate(seat.getRoom().getId(), seatNumber, seatId);
+        seat.changeSeatNumber(seatNumber);
+    }
+
     private void validateDuplicateSeatNumber(Long roomId, String seatNumber) {
         if (seatRepository.existsByRoomIdAndSeatNumber(roomId, seatNumber)) {
+            throw new DuplicateSeatNumberException(seatNumber);
+        }
+    }
+
+    private void validateDuplicateSeatNumberForUpdate(Long roomId, String seatNumber, Long seatId) {
+        if (seatRepository.existsByRoomIdAndSeatNumberAndIdNot(roomId, seatNumber, seatId)) {
             throw new DuplicateSeatNumberException(seatNumber);
         }
     }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>좌석 수정</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <div th:replace="~{fragments/topbar :: topbar}"></div>
+        <h1 class="page-title" th:text="${roomName} + ' 좌석 수정'">좌석 수정</h1>
+
+        <form th:action="@{/admin/seats/{id}/edit(id=${seatId})}" th:object="${seatRegisterRequest}" method="post">
+            <input type="hidden" th:field="*{roomId}">
+            <div class="form-group">
+                <label for="seatNumber">좌석 번호</label>
+                <input type="text" id="seatNumber" th:field="*{seatNumber}">
+                <p class="field-error" th:if="${#fields.hasErrors('seatNumber')}" th:errors="*{seatNumber}"></p>
+            </div>
+            <button class="btn btn-primary" type="submit">수정하기</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -32,4 +32,10 @@ public class RoomService {
         return roomRepository.findById(roomId)
                 .orElseThrow(RoomNotFoundException::new);
     }
+
+    @Transactional
+    public void updateRoom(Long roomId, String name, String description, int capacity) {
+        Room room = findRoomById(roomId);
+        room.changeInfo(name, description, capacity);
+    }
 }

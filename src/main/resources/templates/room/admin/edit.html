@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>룸 수정</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <div th:replace="~{fragments/topbar :: topbar}"></div>
+        <h1 class="page-title">룸 수정</h1>
+
+        <form th:action="@{/admin/rooms/{id}/edit(id=${roomId})}" th:object="${roomRegisterRequest}" method="post">
+            <div class="form-group">
+                <label for="name">룸 이름</label>
+                <input type="text" id="name" th:field="*{name}">
+                <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+            </div>
+            <div class="form-group">
+                <label for="description">설명</label>
+                <input type="text" id="description" th:field="*{description}">
+                <p class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+            </div>
+            <div class="form-group">
+                <label for="capacity">수용 인원</label>
+                <input type="number" id="capacity" th:field="*{capacity}" min="1">
+                <p class="field-error" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></p>
+            </div>
+            <button class="btn btn-primary" type="submit">수정하기</button>
+        </form>
+    </div>
+</body>
+</html>

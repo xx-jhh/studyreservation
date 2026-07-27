@@ -19,7 +19,10 @@
                     <div class="title" th:text="${room.name}">룸 이름</div>
                     <div class="meta" th:text="${room.description}">설명</div>
                 </div>
-                <span class="meta" th:text="'정원 ' + ${room.capacity} + '명'">정원</span>
+                <div>
+                    <span class="meta" th:text="'정원 ' + ${room.capacity} + '명'">정원</span>
+                    <a class="btn btn-outline" th:href="@{/admin/rooms/{id}/edit(id=${room.id})}">수정</a>
+                </div>
             </div>
         </div>
 
