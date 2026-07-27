@@ -11,6 +11,7 @@ import com.example.studyreservation.seat.Seat;
 import com.example.studyreservation.seat.SeatRepository;
 import com.example.studyreservation.user.User;
 import com.example.studyreservation.user.UserRepository;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -34,10 +35,11 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final SeatRepository seatRepository;
     private final UserRepository userRepository;
+    private final Clock clock;
 
     @Transactional
     public String reserve(Long userId, Long seatId, LocalDate reservationDate, LocalTime startTime, LocalTime endTime) {
-        validateTimeRange(startTime, endTime);
+        validateTimeRange(reservationDate, startTime, endTime);
 
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(SeatNotFoundException::new);
@@ -71,7 +73,7 @@ public class ReservationService {
     @Transactional
     public String modifyReservation(Long userId, String reservationGroupId, LocalDate newDate, LocalTime newStartTime, LocalTime newEndTime) {
         List<Reservation> existing = findReservationGroupForUser(userId, reservationGroupId);
-        validateTimeRange(newStartTime, newEndTime);
+        validateTimeRange(newDate, newStartTime, newEndTime);
 
         Seat seat = existing.get(0).getSeat();
         User user = existing.get(0).getUser();
@@ -120,7 +122,7 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
-    private void validateTimeRange(LocalTime startTime, LocalTime endTime) {
+    private void validateTimeRange(LocalDate reservationDate, LocalTime startTime, LocalTime endTime) {
         if (startTime.getMinute() != 0 || endTime.getMinute() != 0) {
             throw new InvalidReservationTimeException("예약 시간은 정시 단위(1시간 슬롯)로만 가능합니다.");
         }
@@ -132,6 +134,9 @@ public class ReservationService {
         }
         if (toExclusiveEndHour(endTime) > CLOSING_HOUR) {
             throw new InvalidReservationTimeException("영업 종료 시간(자정) 이후는 예약할 수 없습니다.");
+        }
+        if (reservationDate.isEqual(LocalDate.now(clock)) && startTime.isBefore(LocalTime.now(clock))) {
+            throw new InvalidReservationTimeException("이미 지난 시간은 예약할 수 없습니다.");
         }
     }
 

@@ -21,8 +21,10 @@ import com.example.studyreservation.seat.Seat;
 import com.example.studyreservation.seat.SeatRepository;
 import com.example.studyreservation.user.User;
 import com.example.studyreservation.user.UserRepository;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +39,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 class ReservationServiceTest {
 
     private static final LocalDate DATE = LocalDate.of(2026, 8, 1);
+    // DATE(및 modifyReservation 테스트의 다음날 날짜)보다 확실히 이전으로 고정 — "지난 시간 예약 금지" 검증이 다른 테스트에 영향 없게 함
+    private static final Clock FIXED_CLOCK = Clock.fixed(
+            LocalDate.of(2026, 7, 1).atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
 
     @Mock
     private ReservationRepository reservationRepository;
@@ -52,7 +57,7 @@ class ReservationServiceTest {
 
     @BeforeEach
     void setUp() {
-        reservationService = new ReservationService(reservationRepository, seatRepository, userRepository);
+        reservationService = new ReservationService(reservationRepository, seatRepository, userRepository, FIXED_CLOCK);
 
         Room room = Room.builder().name("1층 스터디룸").description("설명").capacity(10).build();
         seat = Seat.builder().room(room).seatNumber("A1").build();
@@ -295,6 +300,44 @@ class ReservationServiceTest {
         reservationService.modifyReservation(1L, "group-1", DATE, LocalTime.of(14, 0), LocalTime.of(16, 0));
 
         verify(reservationRepository, times(2)).save(any());
+    }
+
+    @Test
+    void 오늘_날짜에_이미_지난_시작시간이면_예외() {
+        LocalDate today = LocalDate.of(2026, 8, 1);
+        Clock noonClock = Clock.fixed(
+                today.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+        ReservationService serviceAtNoon = new ReservationService(reservationRepository, seatRepository, userRepository, noonClock);
+
+        assertThatThrownBy(() -> serviceAtNoon.reserve(1L, 1L, today, LocalTime.of(9, 0), LocalTime.of(10, 0)))
+                .isInstanceOf(InvalidReservationTimeException.class);
+
+        verify(reservationRepository, never()).save(any());
+    }
+
+    @Test
+    void 오늘_날짜여도_아직_지나지_않은_시작시간이면_예약된다() {
+        LocalDate today = LocalDate.of(2026, 8, 1);
+        Clock noonClock = Clock.fixed(
+                today.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+        ReservationService serviceAtNoon = new ReservationService(reservationRepository, seatRepository, userRepository, noonClock);
+
+        when(seatRepository.findById(1L)).thenReturn(Optional.of(seat));
+        when(userRepository.getReferenceById(1L)).thenReturn(user);
+
+        serviceAtNoon.reserve(1L, 1L, today, LocalTime.of(14, 0), LocalTime.of(15, 0));
+
+        verify(reservationRepository).save(any());
+    }
+
+    @Test
+    void 오늘이_아닌_미래_날짜는_지난시간_검증의_영향을_받지_않는다() {
+        when(seatRepository.findById(1L)).thenReturn(Optional.of(seat));
+        when(userRepository.getReferenceById(1L)).thenReturn(user);
+
+        reservationService.reserve(1L, 1L, DATE, LocalTime.of(6, 0), LocalTime.of(7, 0));
+
+        verify(reservationRepository).save(any());
     }
 
     private void setId(Object entity, Long id) {
