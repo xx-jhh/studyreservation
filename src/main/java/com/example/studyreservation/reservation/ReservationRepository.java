@@ -1,0 +1,21 @@
+package com.example.studyreservation.reservation;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+
+    boolean existsBySeatIdAndReservationDateAndStartTime(Long seatId, LocalDate reservationDate, LocalTime startTime);
+
+    boolean existsByUserIdAndReservationDateAndStartTime(Long userId, LocalDate reservationDate, LocalTime startTime);
+
+    List<Reservation> findByUserIdOrderByReservationDateDescStartTimeDesc(Long userId);
+
+    List<Reservation> findBySeat_Room_IdAndReservationDate(Long roomId, LocalDate reservationDate);
+
+    List<Reservation> findByReservationGroupId(String reservationGroupId);
+
+    long countByUserIdAndReservationDate(Long userId, LocalDate reservationDate);
+}

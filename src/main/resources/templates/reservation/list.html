@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>내 예약 목록</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <div th:replace="~{fragments/topbar :: topbar}"></div>
+        <h1 class="page-title">내 예약 목록</h1>
+
+        <div class="card-list">
+            <div class="card-item" th:each="reservation : ${reservations}">
+                <div>
+                    <div class="title" th:text="${reservation.roomName} + ' · ' + ${reservation.seatNumber} + '번 좌석'">룸 · 좌석</div>
+                    <div class="meta" th:text="${reservation.reservationDate} + ' ' + ${reservation.startTime} + ' ~ ' + ${reservation.endTime}">날짜 시간</div>
+                </div>
+                <div>
+                    <a class="btn btn-outline" th:href="@{/reservations/{groupId}/edit(groupId=${reservation.reservationGroupId})}">수정</a>
+                    <form class="inline" th:action="@{/reservations/{groupId}/cancel(groupId=${reservation.reservationGroupId})}" method="post">
+                        <button class="btn btn-outline" type="submit">취소</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <p th:if="${#lists.isEmpty(reservations)}">예약 내역이 없습니다.</p>
+    </div>
+</body>
+</html>

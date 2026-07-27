@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>룸 목록</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <div th:replace="~{fragments/topbar :: topbar}"></div>
+        <h1 class="page-title">룸 목록</h1>
+
+        <div class="card-list">
+            <a class="card-item" th:each="room : ${rooms}" th:href="@{/rooms/{id}/seats(id=${room.id})}">
+                <div>
+                    <div class="title" th:text="${room.name}">룸 이름</div>
+                    <div class="meta" th:text="${room.description}">설명</div>
+                </div>
+                <span class="meta" th:text="'정원 ' + ${room.capacity} + '명'">정원</span>
+            </a>
+        </div>
+
+        <p th:if="${#lists.isEmpty(rooms)}">등록된 룸이 없습니다.</p>
+    </div>
+</body>
+</html>

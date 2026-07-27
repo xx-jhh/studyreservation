@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>좌석 등록</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <div th:replace="~{fragments/topbar :: topbar}"></div>
+        <h1 class="page-title">좌석 등록</h1>
+
+        <form th:action="@{/admin/seats}" th:object="${seatRegisterRequest}" method="post">
+            <div class="form-group">
+                <label for="roomId">룸</label>
+                <select id="roomId" th:field="*{roomId}">
+                    <option th:each="room : ${rooms}" th:value="${room.id}" th:text="${room.name}">룸 이름</option>
+                </select>
+                <p class="field-error" th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}"></p>
+            </div>
+            <div class="form-group">
+                <label for="seatNumber">좌석 번호</label>
+                <input type="text" id="seatNumber" th:field="*{seatNumber}">
+                <p class="field-error" th:if="${#fields.hasErrors('seatNumber')}" th:errors="*{seatNumber}"></p>
+            </div>
+            <button class="btn btn-primary" type="submit">등록</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'오류 ' + ${status}">오류</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <main class="main">
+        <section class="hero">
+            <span class="badge badge-reserved" th:text="${status}">500</span>
+            <h1>문제가 발생했습니다</h1>
+            <p class="subtitle" th:text="${message != null and !#strings.isEmpty(message)} ? ${message} : '요청을 처리할 수 없습니다.'">오류가 발생했습니다.</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="/">홈으로 돌아가기</a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

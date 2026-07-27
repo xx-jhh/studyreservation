@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>예약 수정</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <div th:replace="~{fragments/topbar :: topbar}"></div>
+        <h1 class="page-title" th:text="${seat.room.name} + ' · ' + ${seat.seatNumber} + '번 좌석 예약 수정'">예약 수정</h1>
+
+        <form th:action="@{/reservations/{groupId}/edit(groupId=${groupId})}" th:object="${reservationRequest}" method="post">
+            <input type="hidden" th:field="*{seatId}">
+
+            <div class="form-group">
+                <label for="reservationDate">날짜</label>
+                <input type="date" id="reservationDate" th:field="*{reservationDate}">
+                <p class="field-error" th:if="${#fields.hasErrors('reservationDate')}" th:errors="*{reservationDate}"></p>
+            </div>
+            <div class="form-group">
+                <label for="startTime">시작 시간</label>
+                <select id="startTime" th:field="*{startTime}">
+                    <option th:each="time : ${startTimeOptions}" th:value="${time}" th:text="${time}"></option>
+                </select>
+                <p class="field-error" th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}"></p>
+            </div>
+            <div class="form-group">
+                <label for="endTime">종료 시간</label>
+                <select id="endTime" th:field="*{endTime}">
+                    <option th:each="time : ${endTimeOptions}" th:value="${time}"
+                            th:text="${time == T(java.time.LocalTime).MIDNIGHT} ? '24:00' : ${time}"></option>
+                </select>
+                <p class="field-error" th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}"></p>
+            </div>
+            <button class="btn btn-primary" type="submit">수정하기</button>
+        </form>
+    </div>
+</body>
+</html>

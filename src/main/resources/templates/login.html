@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>로그인</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <h1>로그인</h1>
+
+            <p class="auth-notice auth-notice-error" th:if="${param.error}">이메일 또는 비밀번호가 올바르지 않습니다.</p>
+            <p class="auth-notice auth-notice-info" th:if="${param.logout}">로그아웃되었습니다.</p>
+
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="text" id="email" name="email" placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">비밀번호</label>
+                    <input type="password" id="password" name="password">
+                </div>
+                <button class="btn btn-primary btn-block" type="submit">로그인</button>
+            </form>
+
+            <p class="auth-footer">아직 계정이 없으신가요? <a th:href="@{/signup}">회원가입</a></p>
+        </div>
+    </div>
+</body>
+</html>
