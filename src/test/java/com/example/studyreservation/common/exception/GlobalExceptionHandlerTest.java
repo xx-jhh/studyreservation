@@ -53,8 +53,9 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void 잘못된_시간_예외는_400으로_매핑된다() {
-        InvalidReservationTimeException exception = new InvalidReservationTimeException("경계값 오류");
-        assertMapping(handler.handleBadRequest(exception), HttpStatus.BAD_REQUEST, "경계값 오류");
+        InvalidReservationTimeException exception =
+                new InvalidReservationTimeException(InvalidReservationTimeException.Reason.PAST_TIME);
+        assertMapping(handler.handleBadRequest(exception), HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
     @Test

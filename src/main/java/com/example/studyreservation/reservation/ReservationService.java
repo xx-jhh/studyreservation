@@ -124,19 +124,19 @@ public class ReservationService {
 
     private void validateTimeRange(LocalDate reservationDate, LocalTime startTime, LocalTime endTime) {
         if (startTime.getMinute() != 0 || endTime.getMinute() != 0) {
-            throw new InvalidReservationTimeException("예약 시간은 정시 단위(1시간 슬롯)로만 가능합니다.");
+            throw new InvalidReservationTimeException(InvalidReservationTimeException.Reason.NOT_HOUR_ALIGNED);
         }
         if (startTime.getHour() < OPENING_HOUR) {
-            throw new InvalidReservationTimeException("영업 시작 시간(06:00) 이전은 예약할 수 없습니다.");
+            throw new InvalidReservationTimeException(InvalidReservationTimeException.Reason.BEFORE_OPENING);
         }
         if (toExclusiveEndHour(endTime) <= startTime.getHour()) {
-            throw new InvalidReservationTimeException("종료 시간은 시작 시간보다 늦어야 합니다.");
+            throw new InvalidReservationTimeException(InvalidReservationTimeException.Reason.END_BEFORE_START);
         }
         if (toExclusiveEndHour(endTime) > CLOSING_HOUR) {
-            throw new InvalidReservationTimeException("영업 종료 시간(자정) 이후는 예약할 수 없습니다.");
+            throw new InvalidReservationTimeException(InvalidReservationTimeException.Reason.AFTER_CLOSING);
         }
         if (reservationDate.isEqual(LocalDate.now(clock)) && startTime.isBefore(LocalTime.now(clock))) {
-            throw new InvalidReservationTimeException("이미 지난 시간은 예약할 수 없습니다.");
+            throw new InvalidReservationTimeException(InvalidReservationTimeException.Reason.PAST_TIME);
         }
     }
 
