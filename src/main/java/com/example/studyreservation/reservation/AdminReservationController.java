@@ -1,6 +1,6 @@
 package com.example.studyreservation.reservation;
 
-import com.example.studyreservation.reservation.dto.AdminReservationResponse;
+import com.example.studyreservation.reservation.dto.ReservationWithOwnerResponse;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,12 +22,12 @@ public class AdminReservationController {
     public String allReservations(Model model) {
         List<Reservation> reservations = reservationService.findAllReservations();
 
-        List<AdminReservationResponse> responses = reservations.stream()
+        List<ReservationWithOwnerResponse> responses = reservations.stream()
                 .collect(Collectors.groupingBy(Reservation::getReservationGroupId, LinkedHashMap::new, Collectors.toList()))
                 .values().stream()
-                .map(AdminReservationResponse::from)
-                .sorted(Comparator.comparing(AdminReservationResponse::reservationDate).reversed()
-                        .thenComparing(AdminReservationResponse::startTime))
+                .map(ReservationWithOwnerResponse::from)
+                .sorted(Comparator.comparing(ReservationWithOwnerResponse::reservationDate).reversed()
+                        .thenComparing(ReservationWithOwnerResponse::startTime))
                 .toList();
 
         model.addAttribute("reservations", responses);
