@@ -7,6 +7,7 @@ import com.example.studyreservation.common.exception.SeatNotFoundException;
 import com.example.studyreservation.reservation.ReservationRepository;
 import com.example.studyreservation.room.Room;
 import com.example.studyreservation.room.RoomRepository;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class SeatService {
     private final SeatRepository seatRepository;
     private final RoomRepository roomRepository;
     private final ReservationRepository reservationRepository;
+    private final Clock clock;
 
     @Transactional
     public Long registerSeat(Long roomId, String seatNumber) {
@@ -48,7 +50,7 @@ public class SeatService {
     }
 
     private void validateNoFutureReservation(Long seatId) {
-        if (reservationRepository.existsBySeatIdAndReservationDateGreaterThanEqual(seatId, LocalDate.now())) {
+        if (reservationRepository.existsBySeatIdAndReservationDateGreaterThanEqual(seatId, LocalDate.now(clock))) {
             throw new SeatHasReservationException();
         }
     }

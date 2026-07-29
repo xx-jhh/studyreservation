@@ -5,6 +5,7 @@ import com.example.studyreservation.seat.Seat;
 import com.example.studyreservation.seat.SeatService;
 import com.example.studyreservation.security.CustomUserDetails;
 import jakarta.validation.Valid;
+import java.time.Clock;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,6 +26,7 @@ public class ReservationController {
 
     private final ReservationService reservationService;
     private final SeatService seatService;
+    private final Clock clock;
 
     @GetMapping("/new")
     public String newReservationForm(@RequestParam Long seatId,
@@ -34,7 +36,7 @@ public class ReservationController {
 
         ReservationRequest reservationRequest = new ReservationRequest();
         reservationRequest.setSeatId(seatId);
-        reservationRequest.setReservationDate(date != null ? date : LocalDate.now());
+        reservationRequest.setReservationDate(date != null ? date : LocalDate.now(clock));
 
         model.addAttribute("reservationRequest", reservationRequest);
         model.addAttribute("seat", seat);
