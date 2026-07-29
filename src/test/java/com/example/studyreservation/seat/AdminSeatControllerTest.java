@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.studyreservation.config.SecurityConfig;
 import com.example.studyreservation.room.RoomService;
+import com.example.studyreservation.security.CustomAccessDeniedHandler;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(AdminSeatController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, CustomAccessDeniedHandler.class})
 class AdminSeatControllerTest {
 
     @Autowired
