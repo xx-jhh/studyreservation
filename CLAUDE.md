@@ -15,7 +15,7 @@ Study cafe seat reservation service. Server-rendered (SSR) with Thymeleaf, sessi
 - `./gradlew test --tests "com.example.studyreservation.SomeTest.someMethod"` — run a single test method
 - `./gradlew bootRun` — run the app locally
 
-Note: DB credentials live in `src/main/resources/application-local.yaml` (git-ignored, activated via `spring.profiles.active: local` in the committed `application.yaml`) — copy `application-local.yaml.example` to `application-local.yaml` and fill in real values before running `bootRun` on a new machine.
+Note: DB credentials live in `src/main/resources/application-local.yaml` (git-ignored) — copy `application-local.yaml.example` to `application-local.yaml` and fill in real values before running `bootRun` on a new machine. The committed `application.yaml` activates `local,dev` by default: `local` supplies the datasource credentials above, `dev` supplies dev-mode JPA behavior (`application-dev.yaml`: `ddl-auto: update`, `show-sql: true`). A parallel `application-prod.yaml` (`ddl-auto: validate`, `show-sql: false`) exists as a structural exercise in separating dev/prod config — swap `SPRING_PROFILES_ACTIVE` to use it; it has no real deployment target yet.
 
 ## Architecture
 
