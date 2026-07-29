@@ -49,12 +49,4 @@ public class User extends BaseTimeEntity {
         this.name = name;
         this.role = role == null ? Role.USER : role;
     }
-
-    public void changePassword(String encodedPassword) {
-        this.password = encodedPassword;
-    }
-
-    public boolean isAdmin() {
-        return this.role == Role.ADMIN;
-    }
 }
