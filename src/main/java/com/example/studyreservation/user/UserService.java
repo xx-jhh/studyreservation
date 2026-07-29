@@ -2,6 +2,7 @@ package com.example.studyreservation.user;
 
 import com.example.studyreservation.common.exception.DuplicateEmailException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,11 @@ public class UserService {
                 .name(name)
                 .build();
 
-        return userRepository.save(user).getId();
+        try {
+            return userRepository.save(user).getId();
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateEmailException(email);
+        }
     }
 
     private void validateDuplicateEmail(String email) {

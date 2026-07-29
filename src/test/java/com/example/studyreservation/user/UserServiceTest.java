@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -63,5 +64,17 @@ class UserServiceTest {
                 .isInstanceOf(DuplicateEmailException.class);
 
         verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void 중복_체크를_통과해도_저장_시점에_유니크_제약이_걸리면_DuplicateEmailException으로_변환된다() {
+        when(userRepository.existsByEmail("race@example.com")).thenReturn(false);
+        when(passwordEncoder.encode("password123")).thenReturn("encoded-password");
+        when(userRepository.save(any(User.class)))
+                .thenThrow(new DataIntegrityViolationException("unique constraint violated"));
+
+        assertThatThrownBy(() -> userService.signUp("race@example.com", "password123", "테스터"))
+                .isInstanceOf(DuplicateEmailException.class)
+                .hasMessage("이미 가입된 이메일입니다: race@example.com");
     }
 }
