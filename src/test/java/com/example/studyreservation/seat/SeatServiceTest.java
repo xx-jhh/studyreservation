@@ -9,9 +9,12 @@ import static org.mockito.Mockito.when;
 
 import com.example.studyreservation.common.exception.DuplicateSeatNumberException;
 import com.example.studyreservation.common.exception.RoomNotFoundException;
+import com.example.studyreservation.common.exception.SeatHasReservationException;
 import com.example.studyreservation.common.exception.SeatNotFoundException;
+import com.example.studyreservation.reservation.ReservationRepository;
 import com.example.studyreservation.room.Room;
 import com.example.studyreservation.room.RoomRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +32,8 @@ class SeatServiceTest {
     private SeatRepository seatRepository;
     @Mock
     private RoomRepository roomRepository;
+    @Mock
+    private ReservationRepository reservationRepository;
 
     private SeatService seatService;
 
@@ -36,7 +41,7 @@ class SeatServiceTest {
 
     @BeforeEach
     void setUp() {
-        seatService = new SeatService(seatRepository, roomRepository);
+        seatService = new SeatService(seatRepository, roomRepository, reservationRepository);
         room = Room.builder().name("1층 스터디룸").description("설명").capacity(20).build();
         ReflectionTestUtils.setField(room, "id", 1L);
     }
@@ -86,10 +91,25 @@ class SeatServiceTest {
     void 존재하는_좌석을_삭제한다() {
         Seat seat = Seat.builder().room(room).seatNumber("A1").build();
         when(seatRepository.findById(1L)).thenReturn(Optional.of(seat));
+        when(reservationRepository.existsBySeatIdAndReservationDateGreaterThanEqual(1L, LocalDate.now()))
+                .thenReturn(false);
 
         seatService.deleteSeat(1L);
 
         verify(seatRepository).delete(seat);
+    }
+
+    @Test
+    void 오늘_이후_예약이_있는_좌석은_삭제할_수_없다() {
+        Seat seat = Seat.builder().room(room).seatNumber("A1").build();
+        when(seatRepository.findById(1L)).thenReturn(Optional.of(seat));
+        when(reservationRepository.existsBySeatIdAndReservationDateGreaterThanEqual(1L, LocalDate.now()))
+                .thenReturn(true);
+
+        assertThatThrownBy(() -> seatService.deleteSeat(1L))
+                .isInstanceOf(SeatHasReservationException.class);
+
+        verify(seatRepository, never()).delete(any());
     }
 
     @Test

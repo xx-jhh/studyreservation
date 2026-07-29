@@ -2,9 +2,12 @@ package com.example.studyreservation.seat;
 
 import com.example.studyreservation.common.exception.DuplicateSeatNumberException;
 import com.example.studyreservation.common.exception.RoomNotFoundException;
+import com.example.studyreservation.common.exception.SeatHasReservationException;
 import com.example.studyreservation.common.exception.SeatNotFoundException;
+import com.example.studyreservation.reservation.ReservationRepository;
 import com.example.studyreservation.room.Room;
 import com.example.studyreservation.room.RoomRepository;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ public class SeatService {
 
     private final SeatRepository seatRepository;
     private final RoomRepository roomRepository;
+    private final ReservationRepository reservationRepository;
 
     @Transactional
     public Long registerSeat(Long roomId, String seatNumber) {
@@ -38,7 +42,15 @@ public class SeatService {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(SeatNotFoundException::new);
 
+        validateNoFutureReservation(seatId);
+
         seatRepository.delete(seat);
+    }
+
+    private void validateNoFutureReservation(Long seatId) {
+        if (reservationRepository.existsBySeatIdAndReservationDateGreaterThanEqual(seatId, LocalDate.now())) {
+            throw new SeatHasReservationException();
+        }
     }
 
     public List<Seat> findSeatsByRoom(Long roomId) {

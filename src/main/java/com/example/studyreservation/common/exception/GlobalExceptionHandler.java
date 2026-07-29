@@ -14,7 +14,8 @@ public class GlobalExceptionHandler {
             DuplicateSeatNumberException.class,
             SeatAlreadyReservedException.class,
             UserAlreadyReservedException.class,
-            DailyReservationLimitExceededException.class
+            DailyReservationLimitExceededException.class,
+            SeatHasReservationException.class
     })
     public ModelAndView handleConflict(RuntimeException e) {
         return errorView(HttpStatus.CONFLICT, e.getMessage());

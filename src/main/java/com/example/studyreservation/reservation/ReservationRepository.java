@@ -9,6 +9,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     boolean existsBySeatIdAndReservationDateAndStartTime(Long seatId, LocalDate reservationDate, LocalTime startTime);
 
+    boolean existsBySeatIdAndReservationDateGreaterThanEqual(Long seatId, LocalDate reservationDate);
+
     boolean existsByUserIdAndReservationDateAndStartTime(Long userId, LocalDate reservationDate, LocalTime startTime);
 
     List<Reservation> findByUserIdOrderByReservationDateDescStartTimeDesc(Long userId);
