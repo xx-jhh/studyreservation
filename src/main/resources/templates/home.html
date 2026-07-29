@@ -27,20 +27,123 @@
         </nav>
 
         <main class="main">
-            <section class="hero">
-                <div sec:authorize="!isAuthenticated()">
-                    <h1>스터디카페 좌석 예약</h1>
-                    <p class="subtitle">원하는 날짜와 시간에 좌석을 예약하고,<br>내 예약을 손쉽게 관리하세요.</p>
-                    <div class="hero-actions">
-                        <a class="btn btn-primary" th:href="@{/signup}">회원가입</a>
-                        <a class="btn btn-outline" th:href="@{/login}">로그인</a>
+            <div class="home-layout">
+            <div class="home-content">
+                <section class="hero">
+                    <div sec:authorize="!isAuthenticated()">
+                        <h1>스터디카페 좌석 예약</h1>
+                        <p class="subtitle">원하는 날짜와 시간에 좌석을 예약하고,<br>내 예약을 손쉽게 관리하세요.</p>
+                        <div class="hero-actions">
+                            <a class="btn btn-primary" th:href="@{/signup}">회원가입</a>
+                            <a class="btn btn-outline" th:href="@{/login}">로그인</a>
+                        </div>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <h1><span class="welcome-name" sec:authentication="principal.name">사용자</span>님, 환영합니다</h1>
+                        <p class="subtitle">오늘도 편안한 학습 공간을 찾아보세요.</p>
+                    </div>
+                </section>
+
+                <div sec:authorize="!isAuthenticated()" class="feature-strip">
+                    <div class="feature-item">
+                        <span class="feature-icon">1</span>
+                        <div class="feature-title">실시간 좌석 현황</div>
+                        <div class="feature-desc">룸별 좌석의 예약 가능 여부를 바로 확인하세요.</div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">2</span>
+                        <div class="feature-title">1시간 단위 예약</div>
+                        <div class="feature-desc">필요한 시간만큼만 정시 단위로 예약할 수 있어요.</div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">3</span>
+                        <div class="feature-title">간편한 예약 관리</div>
+                        <div class="feature-desc">내 예약 목록에서 수정하거나 취소할 수 있어요.</div>
                     </div>
                 </div>
-                <div sec:authorize="isAuthenticated()">
-                    <h1><span class="welcome-name" sec:authentication="principal.name">사용자</span>님, 환영합니다</h1>
-                    <p class="subtitle">오늘도 편안한 학습 공간을 찾아보세요.</p>
+
+                <div sec:authorize="isAuthenticated()" class="quick-actions">
+                    <a class="quick-action" th:href="@{/rooms}">
+                        <span class="quick-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </span>
+                        <div>
+                            <div class="quick-title">좌석 조회</div>
+                            <div class="quick-desc">룸별 좌석 현황을 확인하고 예약하세요</div>
+                        </div>
+                    </a>
+                    <a class="quick-action" th:href="@{/reservations/me}">
+                        <span class="quick-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        </span>
+                        <div>
+                            <div class="quick-title">내 예약</div>
+                            <div class="quick-desc">예약 내역을 확인하고 관리하세요</div>
+                        </div>
+                    </a>
                 </div>
-            </section>
+            </div>
+
+            <div class="home-illustration" aria-hidden="true">
+                <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="windowGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#eef1fd"/>
+                            <stop offset="100%" stop-color="#ffffff"/>
+                        </linearGradient>
+                    </defs>
+
+                    <circle cx="80" cy="90" r="46" fill="#3a5ce0" opacity="0.08"/>
+                    <circle cx="345" cy="70" r="30" fill="#e88a3a" opacity="0.10"/>
+
+                    <path d="M50,346 L50,150 Q50,48 200,48 Q350,48 350,150 L350,346 Z" fill="url(#windowGrad)" stroke="#e6e8ee" stroke-width="2"/>
+                    <line x1="200" y1="48" x2="200" y2="346" stroke="#ffffff" stroke-width="4" opacity="0.7"/>
+                    <line x1="50" y1="197" x2="350" y2="197" stroke="#ffffff" stroke-width="4" opacity="0.7"/>
+
+                    <g opacity="0.9">
+                        <circle cx="120" cy="100" r="16" fill="#3a5ce0" opacity="0.16"/>
+                        <circle cx="270" cy="120" r="10" fill="#e88a3a" opacity="0.18"/>
+                    </g>
+
+                    <rect x="20" y="300" width="360" height="18" rx="4" fill="#e4cda3"/>
+                    <rect x="20" y="316" width="360" height="84" fill="#c9a876"/>
+
+                    <g>
+                        <path d="M110,272 Q140,238 170,225" stroke="#6b5b4a" stroke-width="5" fill="none" stroke-linecap="round"/>
+                        <path d="M170,225 Q195,215 215,222" stroke="#6b5b4a" stroke-width="5" fill="none" stroke-linecap="round"/>
+                        <circle cx="110" cy="272" r="5" fill="#6b5b4a"/>
+                        <path d="M186,206 L246,206 L233,238 L199,238 Z" fill="#e88a3a"/>
+                        <ellipse cx="216" cy="255" rx="34" ry="10" fill="#e88a3a" opacity="0.15"/>
+                    </g>
+
+                    <g transform="rotate(-3 95 283)">
+                        <rect x="58" y="276" width="76" height="15" rx="2" fill="#6b7d99"/>
+                    </g>
+                    <g transform="rotate(2 95 268)">
+                        <rect x="60" y="260" width="70" height="15" rx="2" fill="#e88a3a"/>
+                    </g>
+                    <rect x="62" y="245" width="66" height="14" rx="2" fill="#3a5ce0"/>
+
+                    <g>
+                        <path d="M150,300 L250,300 L250,240 Q250,233 243,233 L157,233 Q150,233 150,240 Z" fill="#2b303c"/>
+                        <rect x="158" y="240" width="84" height="53" rx="2" fill="#7b9bff"/>
+                        <path d="M130,308 L270,308 L258,300 L142,300 Z" fill="#3a4152"/>
+                    </g>
+
+                    <g>
+                        <rect x="288" y="258" width="38" height="40" rx="7" fill="#ffffff" stroke="#dfe3ee" stroke-width="2"/>
+                        <path d="M326,266 q13,0 13,12 q0,12 -13,12" fill="none" stroke="#dfe3ee" stroke-width="4"/>
+                        <path d="M296,250 q5,-9 0,-17" stroke="#c7cad3" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <path d="M309,250 q5,-9 0,-17" stroke="#c7cad3" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    </g>
+
+                    <g>
+                        <rect x="66" y="278" width="34" height="24" rx="3" fill="#d97b4a"/>
+                        <path d="M83,278 Q68,266 63,242 Q84,244 92,262 Q95,240 116,232 Q120,254 105,268 Q117,264 128,272 Q116,286 98,282 Q92,280 83,278 Z" fill="#5a9c67"/>
+                    </g>
+                </svg>
+            </div>
+            </div>
         </main>
     </div>
 </body>

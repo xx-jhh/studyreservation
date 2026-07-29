@@ -9,24 +9,32 @@
 <body>
     <div class="container">
         <div th:replace="~{fragments/topbar :: topbar}"></div>
-        <h1 class="page-title">룸 관리</h1>
 
-        <a class="btn btn-primary" th:href="@{/admin/rooms/new}">룸 등록</a>
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">룸 관리</h1>
+                <p class="page-subtitle">스터디룸을 등록하고 정보를 관리하세요.</p>
+            </div>
+            <a class="btn btn-primary" th:href="@{/admin/rooms/new}">룸 등록</a>
+        </div>
 
-        <div class="card-list" style="margin-top: 20px;">
-            <div class="card-item" th:each="room : ${rooms}">
+        <div class="card-grid" th:if="${!#lists.isEmpty(rooms)}">
+            <div class="card-item stack" th:each="room : ${rooms}">
                 <div>
                     <div class="title" th:text="${room.name}">룸 이름</div>
                     <div class="meta" th:text="${room.description}">설명</div>
+                    <div class="meta" th:text="'정원 ' + ${room.capacity} + '명'">정원</div>
                 </div>
-                <div>
-                    <span class="meta" th:text="'정원 ' + ${room.capacity} + '명'">정원</span>
+                <div class="actions">
                     <a class="btn btn-outline" th:href="@{/admin/rooms/{id}/edit(id=${room.id})}">수정</a>
                 </div>
             </div>
         </div>
 
-        <p th:if="${#lists.isEmpty(rooms)}">등록된 룸이 없습니다.</p>
+        <div class="empty-state" th:if="${#lists.isEmpty(rooms)}">
+            <div class="empty-icon">＋</div>
+            <p>등록된 룸이 없습니다.</p>
+        </div>
     </div>
 </body>
 </html>

@@ -9,25 +9,33 @@
 <body>
     <div class="container">
         <div th:replace="~{fragments/topbar :: topbar}"></div>
-        <h1 class="page-title">좌석 관리</h1>
 
-        <a class="btn btn-primary" th:href="@{/admin/seats/new}">좌석 등록</a>
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">좌석 관리</h1>
+                <p class="page-subtitle">룸별 좌석을 등록하고 관리하세요.</p>
+            </div>
+            <a class="btn btn-primary" th:href="@{/admin/seats/new}">좌석 등록</a>
+        </div>
 
-        <div class="card-list" style="margin-top: 20px;">
-            <div class="card-item" th:each="seat : ${seats}">
+        <div class="card-grid" th:if="${!#lists.isEmpty(seats)}">
+            <div class="card-item stack" th:each="seat : ${seats}">
                 <div>
                     <div class="title" th:text="${seat.roomName} + ' · ' + ${seat.seatNumber} + '번 좌석'">룸 · 좌석</div>
                 </div>
-                <div>
+                <div class="actions">
                     <a class="btn btn-outline" th:href="@{/admin/seats/{id}/edit(id=${seat.id})}">수정</a>
                     <form class="inline" th:action="@{/admin/seats/{id}/delete(id=${seat.id})}" method="post">
-                        <button class="btn btn-outline" type="submit">삭제</button>
+                        <button class="btn btn-danger-outline" type="submit">삭제</button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <p th:if="${#lists.isEmpty(seats)}">등록된 좌석이 없습니다.</p>
+        <div class="empty-state" th:if="${#lists.isEmpty(seats)}">
+            <div class="empty-icon">□</div>
+            <p>등록된 좌석이 없습니다.</p>
+        </div>
     </div>
 </body>
 </html>

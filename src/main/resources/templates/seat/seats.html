@@ -9,7 +9,13 @@
 <body>
     <div class="container">
         <div th:replace="~{fragments/topbar :: topbar}"></div>
-        <h1 class="page-title" th:text="${room.name} + ' 좌석 조회'">룸 좌석 조회</h1>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title" th:text="${room.name} + ' 좌석 조회'">룸 좌석 조회</h1>
+                <p class="page-subtitle" th:text="${date}">날짜</p>
+            </div>
+        </div>
 
         <form class="date-filter" method="get" th:action="@{/rooms/{id}/seats(id=${room.id})}">
             <label for="date">날짜</label>
@@ -17,23 +23,26 @@
             <button class="btn btn-outline" type="submit">조회</button>
         </form>
 
-        <div class="card-list">
+        <div class="card-grid" th:if="${!#lists.isEmpty(seats)}">
             <div class="card-item" th:each="seat : ${seats}">
                 <div>
+                    <span class="badge badge-available" th:if="${#lists.isEmpty(seat.reservedTimeRanges)}">예약 가능</span>
+                    <span class="badge badge-reserved" th:unless="${#lists.isEmpty(seat.reservedTimeRanges)}">예약 있음</span>
                     <div class="title" th:text="${seat.seatNumber} + '번 좌석'">좌석 번호</div>
                     <div class="meta" th:if="${#lists.isEmpty(seat.reservedTimeRanges)}">예약 없음</div>
                     <div class="meta" th:unless="${#lists.isEmpty(seat.reservedTimeRanges)}"
                          th:text="'예약된 시간: ' + ${#strings.listJoin(seat.reservedTimeRanges, ', ')}">예약된 시간</div>
                 </div>
-                <div>
-                    <span class="badge badge-available" th:if="${#lists.isEmpty(seat.reservedTimeRanges)}">예약 가능</span>
-                    <span class="badge badge-reserved" th:unless="${#lists.isEmpty(seat.reservedTimeRanges)}">예약 있음</span>
+                <div class="actions">
                     <a class="btn btn-outline" th:href="@{/reservations/new(seatId=${seat.seatId}, date=${date})}">예약하기</a>
                 </div>
             </div>
         </div>
 
-        <p th:if="${#lists.isEmpty(seats)}">등록된 좌석이 없습니다.</p>
+        <div class="empty-state" th:if="${#lists.isEmpty(seats)}">
+            <div class="empty-icon">□</div>
+            <p>등록된 좌석이 없습니다.</p>
+        </div>
     </div>
 </body>
 </html>
