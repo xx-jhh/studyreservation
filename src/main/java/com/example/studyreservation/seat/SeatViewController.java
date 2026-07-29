@@ -4,6 +4,7 @@ import com.example.studyreservation.reservation.Reservation;
 import com.example.studyreservation.reservation.ReservationService;
 import com.example.studyreservation.room.RoomService;
 import com.example.studyreservation.seat.dto.SeatAvailabilityResponse;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Comparator;
@@ -25,18 +26,13 @@ public class SeatViewController {
     private final RoomService roomService;
     private final SeatService seatService;
     private final ReservationService reservationService;
-
-    @GetMapping("/rooms")
-    public String rooms(Model model) {
-        model.addAttribute("rooms", roomService.findAllRooms());
-        return "seat/rooms";
-    }
+    private final Clock clock;
 
     @GetMapping("/rooms/{roomId}/seats")
     public String seats(@PathVariable Long roomId,
                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                          Model model) {
-        LocalDate targetDate = (date != null) ? date : LocalDate.now();
+        LocalDate targetDate = (date != null) ? date : LocalDate.now(clock);
 
         List<Seat> seats = seatService.findSeatsByRoom(roomId);
         List<Reservation> reservations = reservationService.findReservedSlots(roomId, targetDate);

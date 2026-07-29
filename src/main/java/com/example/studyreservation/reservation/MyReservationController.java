@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/reservations")
-public class ReservationManageController {
+public class MyReservationController {
 
     private final ReservationService reservationService;
 
